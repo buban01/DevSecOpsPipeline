@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - pip3 install --upgrade pip
+      - pip3 install awscli
+      - pip3 install checkov
+  pre_build:
+    commands:
+      - checkov -d ./templates -o json
+  build:
+    commands:
+      - aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://templates/template.yml --parameters file://params/parameters.json
+  post_build:
+    commands:
+      - echo Checkov scan completed and Stack created on `date`
